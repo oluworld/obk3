@@ -26,8 +26,8 @@ PERM_MASK = 0o777
 
 
 class G:
-	def __init__(self, filename):
-		if type(filename) == type(''):
+	def __init__(self, filename: str):
+		if isinstance(filename, str):
 			self.xx = open(filename, 'w')
 	
 	def write(self, x):
