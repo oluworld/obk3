@@ -205,13 +205,12 @@ class Output4(Output3):
 
 
 class ResourceDef(object):
-	__slots__ = ['path', 'stat', 'sum']
-	
-	#
 	def __init__(self, a_path):
 		self.path = a_path
 		self.sum = '<INVALID>'
 		self.stat = ('<INVALID>',)
+		
+	__slots__ = ('path', 'stat', 'sum')
 
 
 def mk_resource_def(a_filename, a_controller):
@@ -323,7 +322,7 @@ class Controller(object):
 		"""@sig public void put(String v)"""
 		self._i.append(v)
 		
-	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'last_inode', '_root', '_i')
+	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'A', 'last_inode', '_root', '_i')
 
 
 class RecursionFlowControl:
