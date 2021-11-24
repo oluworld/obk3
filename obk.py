@@ -195,7 +195,15 @@ class Output4(Output3):
 		pass
 
 
-class ResourceDef(object):
+class Ror: pass
+
+
+class Recurse(Ror):
+	def __init__(self, path):
+		self.path = path
+
+
+class ResourceDef(Ror, object):
 	def __init__(self, a_path):
 		self.path = a_path
 		self.sum = '<INVALID>'
@@ -289,18 +297,6 @@ def main(args):
 	pass
 
 
-class Ror: pass
-
-
-class Recurse(Ror):
-	def __init__(self, path):
-		self.path = path
-
-
-class Resource(Ror):
-	pass
-
-
 class Controller(object):
 	def __init__(self, gg, O):
 		self.resource_number = 1
@@ -340,7 +336,7 @@ def go(sd, con):
 		i = 0
 		t = True
 		key = [os.path.join(sd, x) for x in os.listdir(sd)]  # TODO: create filenamesource
-		con.putAll(key)
+		con.putAll([ResourceDef(k) for k in key])
 		while t:
 			try:
 				t = go1(sd, con, i)
@@ -368,19 +364,20 @@ def go1(sd, con, n):
 		rfc.K = y.path
 		rfc.N = n
 		raise rfc
-
-	# TODO doesn't use Resource
-	resource_def = ResourceDef(y)
-	resource_def.populate(con)
-	
-	output_device = sys.stdout
-	
-	show_resource_def(resource_def, output_device, con)
-	postprocess_resource_def(resource_def, con)
-	con.resource_number += 1
-	con.O.show_attributes(con, output_device, con.A)
+	else:
+		assert isinstance(y, ResourceDef)
 		
-	return True
+		output_device = sys.stdout
+		
+		resource_def = y
+		resource_def.populate(con)
+		
+		show_resource_def(resource_def, output_device, con)
+		postprocess_resource_def(resource_def, con)
+		con.resource_number += 1
+		con.O.show_attributes(con, output_device, con.A)
+		
+		return True
 
 
 if __name__ == '__main__':
