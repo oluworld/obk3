@@ -257,8 +257,8 @@ def newFile(a_con):
 def show_resource_def(a_resource_def, a_output, a_controller):
 	"""@sig public static void show_resource_def(ResourceDef rdef, Output3 O, Controller c)"""
 	s = a_resource_def.stat
-	a_controller.A = AttributeStore()
-	attr_store = a_controller.A
+	attr_store = AttributeStore()
+	a_controller.A = attr_store    # must reset
 	#
 	attr_store.set_filename(a_resource_def.path, a_controller)
 	#
