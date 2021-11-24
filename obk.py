@@ -247,6 +247,7 @@ class ResourceDef(Ror, object):
 
 def newFile(a_con):
 	""" allocate a node in the system and return an identifier for use with obk:storage """
+	# TODO should be using a library for this and checking for duplicates anyway
 	fn = name_of_inode(Fill(repr(a_con.last_inode)), a_con._root, cm_content)
 	a_con.last_inode += 1
 	a_con.gg.Assert('nf', fn)
