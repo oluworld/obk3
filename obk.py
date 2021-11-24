@@ -64,63 +64,139 @@ def get_username_and_groupname(a_uid, a_gid):
 #                              .
 # --------------------------------------------------------------
 
-class Output3:
-	def start(self):
+class Printable:
+	def printable(self) -> str:
 		pass
 	
-	def show_long(self, out, T, val):
+	
+class LongAttribute(Printable):
+	def __init__(self, n, v):
+		self.n = n
+		self.v = v
+		
+	def printable(self) -> str:
+		return '%s %ld' % (self.n, self.v)
+	
+	
+class StringAttribute(Printable):
+	def __init__(self, n, v):
+		self.n = n
+		self.v = v
+	
+	def printable(self) -> str:
+		return '%s "%s"' % (self.n, self.v)
+
+
+class OctalAttribute(Printable):
+	def __init__(self, n, v):
+		self.n = n
+		self.v = v
+	
+	def printable(self) -> str:
+		return '%s 8#%lo' % (self.n, self.v)
+
+
+class BooleanAttribute(Printable):
+	def __init__(self, n, v: bool):
+		self.n = n
+		self.v = v
+	
+	def printable(self) -> str:
+		return '%s %s' % (self.n, self.v)
+
+
+class AttributeStore:
+	store: List[Printable]
+	filename: str
+	
+	def __init__(self):
+		self.store = []
+	
+	def add_long(self, mode, val):
 		""" based on show_diff_lines_long in eachfile.c """
 		#
 		D = {'l': ' vfs:nlinks', 'u': ' vfs:uid', 'g': ' vfs:gid', 'z': ' vfs:filesize', 'i': ' vfs:inode'}
-		x = D[T]
+		x = D[mode]
 		#
-		out.write('\t %s %ld /rdf1\n' % (x, val))
-	
-	def show_octal(self, out, _T, val, extra):
+		self.store.append(LongAttribute(x, val))
+
+	def add_octal(self, mode, val, extra):
 		x = ''
 		#
 		s, p = extra
 		#
-		assert _T == 'p'  # for mode
+		assert mode == 'p'  # for mode
 		#
 		if stat.S_ISLNK(s.st_mode):  # for a symlink ...
-			x += ' vfs:symlink true /rdf1 '
+			self.store.append(BooleanAttribute('vfs:symlink', True))
 			# TODO: catch errors here!!!
 			try:
 				read1 = os.readlink(p)
-				x += ' vfs:symtarget "%s"' % read1
+				self.store.append(StringAttribute('vfs:symtarget', read1))
 			except OSError as e:
-				x += ' /rdf1\n\tobk:error-during-readlink "%d"' % e.errno
+				x += ' /rdf1\n\tobk:error-during-readlink "%d"' % e.errno # TODO test this
 			assert val == 0o777
 		else:
 			if stat.S_ISDIR(s.st_mode):  # for a dir ...
-				x += ' vfs:directory true /rdf1 '
-			x += ' vfs:mode 8#%lo' % val
+				self.store.append(BooleanAttribute('vfs:directory', True))
+			self.store.append(OctalAttribute('vfs:mode', val))
 		#
-		out.write(' %s /rdf1\n' % x)
-	
-	def show_time(self, out, T, val):
+		######out.write(' %s /rdf1\n' % x)
+
+	def add_time(self, mode, val):
 		""" based on show_diff_time from eachfile.c """
 		#
 		D = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
-		x = D[T]
+		x = D[mode]
 		#
-		buf = time.strftime("%Y_%m%M%d-%H%M%S", time.localtime(val))
+		buf = time.strftime("%Y_%m%b%d-%H:%M:%S", time.localtime(val))
 		assert not not buf  # TODO: why do we need assert?
 		# if not buf: DIE("strftime") # ??
-		out.write('\t %s "%s" /rdf1\n' % (x, buf))
-	
-	def show_checksum(self, out, sum):
-		out.write("\tobk:sha256 '%s' /rdf1\n" % (sum))
+		self.store.append(StringAttribute(x, buf))
+
+	def add_checksum(self, a_sum):
+		self.store.append(StringAttribute('obk:sha256', a_sum))
 	
 	def show_filename(self, out, name):
 		pass
 	
-	def set_filename(self, out, name, a_con):
+	def set_filename(self, name, a_con):
+		# _res = 'res%d' % a_con.resource_number
+		# a_con.gg.Assert('fn', name)
+		# xx = newFile(a_con)
+		# out.write('%s obk:res "%s" /rdf1\n  obk:storage "%s" /rdf1\n\t' % (_res, name, xx))
+		self.filename = name
+
+
+class Output3:
+	def start(self):
+		pass
+	
+	def show_attributes(self, a_con, out, a_attributes):
+		fn = a_attributes.filename
+
 		_res = 'res%d' % a_con.resource_number
-		a_con.gg.Assert('fn', name)
+		a_con.gg.Assert('fn', fn)
 		xx = newFile(a_con)
-		out.write('%s obk:res "%s" /rdf1\n  obk:storage "%s" /rdf1\n\t' % (_res, name, xx))
+		out.write('%s obk:res "%s" /rdf1\n  obk:storage "%s" /rdf1' % (_res, fn, xx))
+
+		s = a_attributes.store
+		if len(s) == 1:
+			h = s[0]
+			t = None
+		elif len(s) == 0:
+			# TODO print notice of no attributes stores
+			return
+		else:
+			h = s[:len(s)-1]
+			t = s[-1]
+			
+		if t is not None:
+			[out.write("\n\t%s /rdf1" % x.printable()) for x in h]
+			out.write("\n\t%s /rdf0" % t.printable())
+		else:
+			#assert len(h) == 1
+			out.write("\n\t%s /rdf0" % h[0].printable())
 
 
 class Output4(Output3):
@@ -183,23 +259,25 @@ def newFile(a_con):
 def show_resource_def(a_resource_def, a_output, a_controller):
 	"""@sig public static void show_resource_def(ResourceDef rdef, Output3 O, Controller c)"""
 	s = a_resource_def.stat
-	O = a_controller.O  # !!
+	O = a_controller.A = AttributeStore()
+	Out = a_controller.O  # !!
 	#
-	O.set_filename(a_output, a_resource_def.path, a_controller)
+	O.set_filename(a_resource_def.path, a_controller)
 	#
-	O.show_octal(a_output, 'p', s.st_mode & PERM_MASK, (s, a_resource_def.path))
-	O.show_long(a_output, 'i', s.st_ino)
-	O.show_long(a_output, 'l', s.st_nlink)
-	O.show_long(a_output, 'u', s.st_uid)
-	O.show_long(a_output, 'g', s.st_gid)
+	O.add_octal('p', s.st_mode & PERM_MASK, (s, a_resource_def.path))
+	O.add_long('i', s.st_ino)
+	O.add_long('l', s.st_nlink)
+	O.add_long('u', s.st_uid)
+	O.add_long('g', s.st_gid)
 	if a_resource_def.sum[0] != '<':  # size of dirs and symlinks dont matter
-		O.show_long(a_output, 'z', s.st_size)
-	O.show_time(a_output, 'a', s.st_atime)
-	O.show_time(a_output, 'm', s.st_mtime)
-	O.show_time(a_output, 'c', s.st_ctime)
-	if a_resource_def.sum[0] != '<':  # sum of dirs and symlinks dont exist
-		O.show_checksum(a_output, a_resource_def.sum)  # , 0)
-	a_output.write("\tobk:dummy 'dummy' /rdf0\n")
+		O.add_long('z', s.st_size)
+	O.add_time('a', s.st_atime)
+	O.add_time('m', s.st_mtime)
+	O.add_time('c', s.st_ctime)
+	if a_resource_def.sum[0] != '<':  # a_sum of dirs and symlinks dont exist
+		O.add_checksum(a_resource_def.sum)  # , 0)
+	a_output.write('\n\n')
+	#####a_output.write("\tobk:dummy 'dummy' /rdf0\n")
 
 
 def postprocess_resource_def(a_resource_def, a_controller):
@@ -232,6 +310,7 @@ class Controller(object):
 		self.nodes = {}
 		self.gg = gg
 		self.O = O
+		self.A = AttributeStore()
 		self.last_inode = 0
 		self._root = time.strftime('%d%H%M%S', time.localtime(time.time()))
 		self._i = []
@@ -280,6 +359,7 @@ def go1(sd, con, n):
 		show_resource_def(val, sys.stdout, con)
 		postprocess_resource_def(val, con)
 		con.resource_number += 1
+		con.O.show_attributes(con, sys.stdout, con.A)
 	try:
 		go1(sd, con, n + 1)
 	except Exception as e:
