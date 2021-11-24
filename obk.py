@@ -97,8 +97,8 @@ class Output3:
 		D = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
 		x = D[T]
 		#
-		buf = time.strftime("%Y%m%d-%H%M%S", time.localtime(val))
-		assert not not buf  # TODO:
+		buf = time.strftime("%Y_%m%M%d-%H%M%S", time.localtime(val))
+		assert not not buf  # TODO: why do we need assert?
 		# if not buf: DIE("strftime") # ??
 		out.write('\t %s "%s" /rdf1\n' % (x, buf))
 	
