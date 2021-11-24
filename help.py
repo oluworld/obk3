@@ -15,14 +15,14 @@ def iswc(s, c='/', z=2):
 	return R[:-1]
 
 
-def name_of_inode(inode_str, X, cm=0):
+def name_of_inode(inode_str, root, cm=0):
 	# returns a string
 	# metadata is 1 (in cm)
 	if cm == cm_content:
 		CM = '-C'
 	else:
 		CM = '-M'
-	R = '%s/%s/%s%s' % (X._root, iswc(inode_str)[:-3], inode_str, CM)
+	R = '%s/%s/%s%s' % (root, iswc(inode_str)[:-3], inode_str, CM)
 	return R
 
 
