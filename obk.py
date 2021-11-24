@@ -134,7 +134,7 @@ class AttributeStore:
 				read1 = os.readlink(p)
 				self.store.append(StringAttribute('vfs:symtarget', read1))
 			except OSError as e:
-				x += ' /rdf1\n\tobk:error-during-readlink "%d"' % e.errno # TODO test this
+				x += ' /rdf1\n\tobk:error-during-readlink "%d"' % e.errno  # TODO test this
 			assert val == 0o777
 		else:
 			if stat.S_ISDIR(s.st_mode):  # for a dir ...
