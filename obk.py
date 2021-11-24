@@ -236,7 +236,7 @@ class ResourceDef(object):
 					print(e)
 					print('-----------------------------')
 				else:
-					a_controller.nodes[R.stat.st_ino] = R.sum
+					a_controller.nodes[self.stat.st_ino] = self.sum
 					xf.close()
 	
 		# ~ R.name = a_filename
