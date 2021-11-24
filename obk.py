@@ -274,8 +274,7 @@ def show_resource_def(a_resource_def, a_output, a_controller):
 
 def postprocess_resource_def(a_resource_def, a_controller):
 	"""@sig public static void postprocess_resource_def(ResourceDef a1, Controller a2)"""
-	if a_resource_def.sum == '<DIR>':  # and recursive and(or??) name in vals
-		# go(os.path.join(a_resource_def.path), a_controller.O, a_controller.gg)
+	if a_resource_def.sum == '<DIR>':
 		a_controller.put(Recurse(a_resource_def.path))
 		a_controller.gg.Assert('fo', '1')
 	else:
