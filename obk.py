@@ -283,7 +283,7 @@ def postprocess_resource_def(a_resource_def, a_controller):
 	"""@sig public static void postprocess_resource_def(ResourceDef a1, Controller a2)"""
 	if a_resource_def.sum == '<DIR>':  # and recursive and(or??) name in vals
 		# go(os.path.join(a_resource_def.path), a_controller.O, a_controller.gg)
-		a_controller.put(['recursion', a_resource_def.path])
+		a_controller.put(Recurse(a_resource_def.path))
 		a_controller.gg.Assert('fo', '1')
 	else:
 		a_controller.gg.Assert('fo', '0')
@@ -297,10 +297,20 @@ def main():
 	gg = G('ii')
 	# key  = [ os.path.join(sd, x ) for x in os.listdir(sd) for sd in xx ] # TODO: create filenamesource
 	con = Controller(gg, O)
-	# con._i=key
-	# go(con)
 	rr = [go(sd, con) for sd in xx]
-	rr = rr
+	pass
+
+
+class Ror: pass
+
+
+class Recurse(Ror):
+	def __init__(self, path):
+		self.path = path
+
+
+class Resource(Ror):
+	pass
 
 
 class Controller(object):
@@ -312,17 +322,25 @@ class Controller(object):
 		self.A = AttributeStore()
 		self.last_inode = 0
 		self._root = time.strftime('%d%H%M%S', time.localtime(time.time()))
-		self._i = []
+		self.__i = []
 	
 	def get(self, i):
-		"""@sig public String get(int i)"""  # throws...
-		return self._i[i]
+		"""@sig public RoR get(int i)"""  # throws...
+		return self.__i[i]
 	
 	def put(self, v):
-		"""@sig public void put(String v)"""
-		self._i.append(v)
+		"""@sig public void put(Ror v)"""
+		self.__i.append(v)
 		
-	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'A', 'last_inode', '_root', '_i')
+	def putAll(self, vs):
+		"""@sig public void put(List<Ror> v)"""
+		for v in vs:
+			self.__i.append(v)
+			
+	def save(self, n):
+		self.__i = self.__i[n:]  # save memory
+		
+	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'A', 'last_inode', '_root', '__i')
 
 
 class RecursionFlowControl(Exception):
@@ -331,14 +349,25 @@ class RecursionFlowControl(Exception):
 
 def go(sd, con):
 	try:
+		i = 0
+		t = True
 		key = [os.path.join(sd, x) for x in os.listdir(sd)]  # TODO: create filenamesource
-		con._i += key
-		go1(None, con, 0)
+		con.putAll(key)
+		while t:
+			try:
+				t = go1(sd, con, i)
+			except IndexError:
+				break  # see below
+			except RecursionFlowControl as rfc:
+				raise rfc
+			except Exception as e:
+				print(100, 'error during operation >>', (sd, con, i), '<<', e)
+				t = False  # TODO: do we really want to stop?
+			i += 1
+			# if i > len(key):
+			# 	t = False
 	except RecursionFlowControl as rfc:
-		# key  = [ os.path.join(sd, x ) for x in os.listdir(sd)] # TODO: create filenamesource
-		# con._i=con._i[rfc.N+1:]+key
-		# go1(
-		con._i = con._i[rfc.N + 1:]  # save memory
+		con.save(rfc.N + 1)  # save memory
 		go(rfc.K, con)
 	except IndexError:
 		pass  # presumably from con.get(xx)
@@ -346,23 +375,23 @@ def go(sd, con):
 
 def go1(sd, con, n):
 	y = con.get(n)
-	if y[0] == 'recursion':  # TODO: use currying and a behavior. hint: lambda
+	if isinstance(y, Recurse):
 		rfc = RecursionFlowControl()
-		rfc.K = y[1]
+		rfc.K = y.path
 		rfc.N = n
 		raise rfc
-	#
-	val = mk_resource_def(y, con)
-	if 1:
-		# for val in vals:
-		show_resource_def(val, sys.stdout, con)
-		postprocess_resource_def(val, con)
-		con.resource_number += 1
-		con.O.show_attributes(con, sys.stdout, con.A)
-	try:
-		go1(sd, con, n + 1)
-	except Exception as e:
-		print(100, 'error during operation >>', (sd, con, n), '<<', e)
+
+	# TODO doesn't use Resource
+	resource_def = mk_resource_def(y, con)
+	
+	output_device = sys.stdout
+	
+	show_resource_def(resource_def, output_device, con)
+	postprocess_resource_def(resource_def, con)
+	con.resource_number += 1
+	con.O.show_attributes(con, output_device, con.A)
+		
+	return True
 
 
 if __name__ == '__main__':
