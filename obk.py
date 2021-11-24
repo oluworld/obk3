@@ -239,7 +239,8 @@ class Controller(object):
 	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'last_inode', '_root', '_i')
 
 
-class RecursionFlowControl: pass
+class RecursionFlowControl:
+	__slots__ = ('K', 'N')
 
 
 def go(sd, con):
