@@ -368,9 +368,7 @@ def go1(sd, con, n):
 		rfc.K = y.path
 		rfc.N = n
 		raise rfc
-	else:
-		assert isinstance(y, ResourceDef)
-		
+	elif isinstance(y, ResourceDef):
 		output_device = sys.stdout
 		
 		resource_def = y
