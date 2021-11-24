@@ -173,7 +173,7 @@ def newFile(a_con):
 
 
 def show_resource_def(a_resource_def, a_output, a_controller):
-	"@sig public static void show_resource_def(ResourceDef rdef, Output3 O, Controller c)"
+	"""@sig public static void show_resource_def(ResourceDef rdef, Output3 O, Controller c)"""
 	s = a_resource_def.stat
 	O = a_controller.O  # !!
 	#
@@ -195,7 +195,7 @@ def show_resource_def(a_resource_def, a_output, a_controller):
 
 
 def postprocess_resource_def(a_resource_def, a_controller):
-	"@sig public static void postprocess_resource_def(ResourceDef a1, Controller a2)"
+	"""@sig public static void postprocess_resource_def(ResourceDef a1, Controller a2)"""
 	if a_resource_def.sum == '<DIR>':  # and recursive and(or??) name in vals
 		# go(os.path.join(a_resource_def.path), a_controller.O, a_controller.gg)
 		a_controller.put(['recursion', a_resource_def.path])
