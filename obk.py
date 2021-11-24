@@ -210,41 +210,39 @@ class ResourceDef(object):
 		self.sum = '<INVALID>'
 		self.stat = ('<INVALID>',)
 		
-	__slots__ = ('path', 'stat', 'sum')
-
-
-def mk_resource_def(a_filename, a_controller):
-	"""@sig public ResourceDef mk_resource_def(String s, Controller c)"""
-	R = ResourceDef(a_filename)
-	#
-	if os.path.islink(a_filename):
-		R.stat = os.lstat(a_filename)  # TODO:
-	else:
-		R.stat = os.stat(a_filename)
-	if os.path.isdir(a_filename):  # stat.S_ISDIR(self.stat.st_mode):
-		R.sum = '<DIR>'
-	elif os.path.islink(a_filename):  # only for symlinks
-		R.sum = '<isLINK>'
-	else:
-		# dont calculate checksums twice for hardlinks
-		if R.stat.st_nlink > 1 and R.stat.st_ino in a_controller.nodes:
-			R.sum = a_controller.nodes[R.stat.st_ino]
+	def populate(self, a_controller):
+		filename = self.path
+		
+		if os.path.islink(filename):
+			self.stat = os.lstat(filename)  # TODO:
 		else:
-			try:
-				xf = dfile(open(a_filename, 'rb'), None)  # TODO: None was self
-				R.sum = _sha256(xf.read()).hexdigest()
-			except Exception as e:
-				print('-----------------------------')
-				print('during %s' % a_filename)
-				print('-----------------------------')
-				print(e)
-				print('-----------------------------')
+			self.stat = os.stat(filename)
+		if os.path.isdir(filename):  # stat.S_ISDIR(self.stat.st_mode):
+			self.sum = '<DIR>'
+		elif os.path.islink(filename):  # only for symlinks
+			self.sum = '<isLINK>'
+		else:
+			# dont calculate checksums twice for hardlinks
+			if self.stat.st_nlink > 1 and self.stat.st_ino in a_controller.nodes:
+				self.sum = a_controller.nodes[self.stat.st_ino]
 			else:
-				a_controller.nodes[R.stat.st_ino] = R.sum
-				xf.close()
-	# ~ R.name = a_filename
-	# ~ print 167, R.path, R.sum
-	return R
+				try:
+					xf = dfile(open(filename, 'rb'), None)  # TODO: None was self
+					self.sum = _sha256(xf.read()).hexdigest()
+				except Exception as e:
+					print('-----------------------------')
+					print('during %s' % filename)
+					print('-----------------------------')
+					print(e)
+					print('-----------------------------')
+				else:
+					a_controller.nodes[R.stat.st_ino] = R.sum
+					xf.close()
+	
+		# ~ R.name = a_filename
+		# ~ print 167, R.path, R.sum
+		
+	__slots__ = ('path', 'stat', 'sum')
 
 
 def newFile(a_con):
@@ -382,7 +380,8 @@ def go1(sd, con, n):
 		raise rfc
 
 	# TODO doesn't use Resource
-	resource_def = mk_resource_def(y, con)
+	resource_def = ResourceDef(y)
+	resource_def.populate(con)
 	
 	output_device = sys.stdout
 	
