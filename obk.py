@@ -278,15 +278,14 @@ def postprocess_resource_def(a_resource_def, a_controller):
 		a_controller.gg.Assert('fo', '0')
 
 
-def main():
+def main(args):
 	O = Output3()
 	O.start()
-	xx = sys.argv[1:] or ['.']
 	# G      = G0 # !!
 	gg = G('ii')
 	# key  = [ os.path.join(sd, x ) for x in os.listdir(sd) for sd in xx ] # TODO: create filenamesource
 	con = Controller(gg, O)
-	rr = [go(sd, con) for sd in xx]
+	rr = [go(sd, con) for sd in args]
 	pass
 
 
@@ -385,4 +384,6 @@ def go1(sd, con, n):
 
 
 if __name__ == '__main__':
-	main()
+	# TODO argparse or getopt some options
+	xx = sys.argv[1:] or ['.']
+	main(xx)
