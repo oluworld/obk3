@@ -232,7 +232,7 @@ class ResourceDef(object):
 					self.sum = _sha256(xf.read()).hexdigest()
 				except Exception as e:
 					print('-----------------------------')
-					print('during %s' % filename)
+					print('during sha256sum of %s' % filename)
 					print('-----------------------------')
 					print(e)
 					print('-----------------------------')
