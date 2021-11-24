@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # TODO:
 # * vfs:parent
 # * stop using res(%d)
