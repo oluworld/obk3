@@ -8,7 +8,6 @@
 import os, time, stat, hashlib, sys
 from typing import List
 
-import os, time, stat, _sha256, sys
 from help import *
 
 
@@ -29,6 +28,7 @@ def _sha256(bytes):
 # 	from java.lang import Object as object
 # except:
 # 	pass
+
 
 PERM_MASK = 0o777
 
