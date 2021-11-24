@@ -63,16 +63,8 @@ class Output3:
 	def show_long(self, out, T, val):
 		""" based on show_diff_lines_long in eachfile.c """
 		#
-		if T == 'l':
-			x = ' vfs:nlinks'
-		elif T == 'u':
-			x = ' vfs:uid'
-		elif T == 'g':
-			x = ' vfs:gid'
-		elif T == 'z':
-			x = ' vfs:filesize'
-		elif T == 'i':
-			x = ' vfs:inode'
+		D = {'l': ' vfs:nlinks', 'u': ' vfs:uid', 'g': ' vfs:gid', 'z': ' vfs:filesize', 'i': ' vfs:inode'}
+		x = D[T]
 		#
 		out.write('\t %s %ld /rdf1\n' % (x, val))
 	
@@ -102,12 +94,8 @@ class Output3:
 	def show_time(self, out, T, val):
 		""" based on show_diff_time from eachfile.c """
 		#
-		if T == 'a':
-			x = ' vfs:access-time'
-		elif T == 'm':
-			x = ' vfs:modify-time'
-		elif T == 'c':
-			x = ' vfs:create-time'
+		D = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
+		x = D[T]
 		#
 		buf = time.strftime("%Y%m%d-%H%M%S", time.localtime(val))
 		assert not not buf  # TODO:
