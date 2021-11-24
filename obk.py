@@ -256,25 +256,24 @@ def newFile(a_con):
 def show_resource_def(a_resource_def, a_output, a_controller):
 	"""@sig public static void show_resource_def(ResourceDef rdef, Output3 O, Controller c)"""
 	s = a_resource_def.stat
-	O = a_controller.A = AttributeStore()
-	Out = a_controller.O  # !!
+	a_controller.A = AttributeStore()
+	attr_store = a_controller.A
 	#
-	O.set_filename(a_resource_def.path, a_controller)
+	attr_store.set_filename(a_resource_def.path, a_controller)
 	#
-	O.add_octal('p', s.st_mode & PERM_MASK, (s, a_resource_def.path))
-	O.add_long('i', s.st_ino)
-	O.add_long('l', s.st_nlink)
-	O.add_long('u', s.st_uid)
-	O.add_long('g', s.st_gid)
+	attr_store.add_octal('p', s.st_mode & PERM_MASK, (s, a_resource_def.path))
+	attr_store.add_long('i', s.st_ino)
+	attr_store.add_long('l', s.st_nlink)
+	attr_store.add_long('u', s.st_uid)
+	attr_store.add_long('g', s.st_gid)
 	if a_resource_def.sum[0] != '<':  # size of dirs and symlinks dont matter
-		O.add_long('z', s.st_size)
-	O.add_time('a', s.st_atime)
-	O.add_time('m', s.st_mtime)
-	O.add_time('c', s.st_ctime)
+		attr_store.add_long('z', s.st_size)
+	attr_store.add_time('a', s.st_atime)
+	attr_store.add_time('m', s.st_mtime)
+	attr_store.add_time('c', s.st_ctime)
 	if a_resource_def.sum[0] != '<':  # a_sum of dirs and symlinks dont exist
-		O.add_checksum(a_resource_def.sum)  # , 0)
+		attr_store.add_checksum(a_resource_def.sum)  # , 0)
 	a_output.write('\n\n')
-	#####a_output.write("\tobk:dummy 'dummy' /rdf0\n")
 
 
 def postprocess_resource_def(a_resource_def, a_controller):
