@@ -246,12 +246,7 @@ class ResourceDef(Ror, object):
 
 
 def newFile(a_con):
-	""" allocate a node in the system and return an identifier for use with obk:storage """
-	# TODO should be using a library for this and checking for duplicates anyway
-	fn = name_of_inode(Fill(repr(a_con.last_inode)), a_con._root, cm_content)
-	a_con.last_inode += 1
-	a_con.gg.Assert('nf', fn)
-	return fn
+	return a_con.nextHNode()
 
 
 def show_resource_def(a_resource_def, a_output, a_controller):
@@ -325,6 +320,14 @@ class Controller(object):
 	def save(self, n):
 		self.__i = self.__i[n:]  # save memory
 		
+	def nextHNode(self) -> str:
+		""" allocate a node in the system and return an identifier for use with obk:storage """
+		# TODO should be using a library for this and checking for duplicates anyway
+		fn = name_of_inode(Fill(repr(self.last_inode)), self._root, cm_content)
+		self.last_inode += 1
+		self.gg.Assert('nf', fn)
+		return fn
+
 	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'A', 'last_inode', '_root', '__i')
 
 
