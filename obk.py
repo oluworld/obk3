@@ -5,9 +5,17 @@
 # * use alvo for postprocessing, (actual file operations)
 #   * actually integrate HiStore
 #   * move files into place (poss. across filesystems)
+import os, time, stat, hashlib, sys
+from typing import List
 
 import os, time, stat, _sha256, sys
 from help import *
+
+
+def _sha256(bytes):
+	hasher = hashlib.sha256()
+	hasher.update(bytes)
+	return hasher
 
 # s256 = _sha256.sha256()
 # s256.update(b'abc')
@@ -148,8 +156,8 @@ def mk_resource_def(a_filename, a_controller):
 			R.sum = a_controller.nodes[R.stat.st_ino]
 		else:
 			try:
-				xf = dfile(open(a_filename), None)  # TODO: None was self
-				R.sum = _sha256.new(xf.read()).hexdigest()
+				xf = dfile(open(a_filename, 'rb'), None)  # TODO: None was self
+				R.sum = _sha256(xf.read()).hexdigest()
 			except Exception as e:
 				print('-----------------------------')
 				print('during %s' % a_filename)
