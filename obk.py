@@ -282,12 +282,12 @@ def postprocess_resource_def(a_resource_def, a_controller):
 
 
 def main(args):
-	O = Output3()
-	O.start()
+	output3 = Output3()
+	output3.start()
 	# G      = G0 # !!
-	gg = G('ii')
+	asserter = G('ii')
 	# key  = [ os.path.join(sd, x ) for x in os.listdir(sd) for sd in xx ] # TODO: create filenamesource
-	con = Controller(gg, O)
+	con = Controller(asserter, output3)
 	rr = [go(sd, con) for sd in args]
 	pass
 
