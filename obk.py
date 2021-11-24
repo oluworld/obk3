@@ -9,11 +9,11 @@
 import os, time, stat, _sha256, sys
 from help import *
 
-s256 = _sha256.sha256()
-s256.update(b'abc')
-hd = s256.hexdigest()
-
-print (hd)
+# s256 = _sha256.sha256()
+# s256.update(b'abc')
+# hd = s256.hexdigest()
+#
+# print (hd)
 
 # from alvo import *
 
