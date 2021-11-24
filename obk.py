@@ -151,11 +151,11 @@ def mk_resource_def(a_filename, a_controller):
 				xf = dfile(open(a_filename), None)  # TODO: None was self
 				R.sum = _sha256.new(xf.read()).hexdigest()
 			except Exception as e:
-				print ('-----------------------------')
-				print ('during %s' % a_filename)
-				print ('-----------------------------')
-				print (e)
-				print ('-----------------------------')
+				print('-----------------------------')
+				print('during %s' % a_filename)
+				print('-----------------------------')
+				print(e)
+				print('-----------------------------')
 			else:
 				a_controller.nodes[R.stat.st_ino] = R.sum
 				xf.close()
@@ -229,11 +229,11 @@ class Controller(object):
 		self._i = []
 	
 	def get(self, i):
-		"@sig public String get(int i)"  # throws...
+		"""@sig public String get(int i)"""  # throws...
 		return self._i[i]
 	
 	def put(self, v):
-		"@sig public void put(String v)"
+		"""@sig public void put(String v)"""
 		self._i.append(v)
 
 
@@ -272,7 +272,7 @@ def go1(sd, con, n):
 	try:
 		go1(sd, con, n + 1)
 	except Exception as e:
-		print (100, 'error during operation >>', (sd, con, n), '<<', e)
+		print(100, 'error during operation >>', (sd, con, n), '<<', e)
 
 
 if __name__ == '__main__':
