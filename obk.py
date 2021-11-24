@@ -190,9 +190,9 @@ class Output3:
 			out.write("\n\t%s /rdf0" % h[0].printable())
 
 
-class Output4(Output3):
-	def _pd(self):
-		pass
+# class Output4(Output3):
+# 	def _pd(self):
+# 		pass
 
 
 class Ror: pass
