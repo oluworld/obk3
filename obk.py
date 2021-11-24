@@ -109,7 +109,7 @@ class AttributeStore:
 	def add_long(self, mode, val):
 		""" based on show_diff_lines_long in eachfile.c """
 		#
-		properties = {'l': ' vfs:nlinks', 'u': ' vfs:uid', 'g': ' vfs:gid', 'z': ' vfs:filesize', 'i': ' vfs:inode'}
+		properties = {'l': 'vfs:nlinks', 'u': 'vfs:uid', 'g': 'vfs:gid', 'z': 'vfs:filesize', 'i': 'vfs:inode'}
 		x = properties[mode]
 		#
 		self.store.append(LongAttribute(x, val))
@@ -140,7 +140,7 @@ class AttributeStore:
 	def add_time(self, mode, val):
 		""" based on show_diff_time from eachfile.c """
 		#
-		properties = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
+		properties = {'a': 'vfs:access-time', 'm': 'vfs:modify-time', 'c': 'vfs:create-time'}
 		x = properties[mode]
 		#
 		buf = time.strftime("%Y_%m%b%d-%H:%M:%S", time.localtime(val))
