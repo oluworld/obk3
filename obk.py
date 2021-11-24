@@ -235,6 +235,8 @@ class Controller(object):
 	def put(self, v):
 		"""@sig public void put(String v)"""
 		self._i.append(v)
+		
+	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'last_inode', '_root', '_i')
 
 
 class RecursionFlowControl: pass
