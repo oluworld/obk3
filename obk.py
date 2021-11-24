@@ -109,8 +109,8 @@ class AttributeStore:
 	def add_long(self, mode, val):
 		""" based on show_diff_lines_long in eachfile.c """
 		#
-		D = {'l': ' vfs:nlinks', 'u': ' vfs:uid', 'g': ' vfs:gid', 'z': ' vfs:filesize', 'i': ' vfs:inode'}
-		x = D[mode]
+		properties = {'l': ' vfs:nlinks', 'u': ' vfs:uid', 'g': ' vfs:gid', 'z': ' vfs:filesize', 'i': ' vfs:inode'}
+		x = properties[mode]
 		#
 		self.store.append(LongAttribute(x, val))
 
@@ -140,8 +140,8 @@ class AttributeStore:
 	def add_time(self, mode, val):
 		""" based on show_diff_time from eachfile.c """
 		#
-		D = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
-		x = D[mode]
+		properties = {'a': ' vfs:access-time', 'm': ' vfs:modify-time', 'c': ' vfs:create-time'}
+		x = properties[mode]
 		#
 		buf = time.strftime("%Y_%m%b%d-%H:%M:%S", time.localtime(val))
 		assert not not buf  # TODO: why do we need assert?
@@ -154,11 +154,7 @@ class AttributeStore:
 	def show_filename(self, out, name):
 		pass
 	
-	def set_filename(self, name, a_con):
-		# _res = 'res%d' % a_con.resource_number
-		# a_con.gg.Assert('fn', name)
-		# xx = newFile(a_con)
-		# out.write('%s obk:res "%s" /rdf1\n  obk:storage "%s" /rdf1\n\t' % (_res, name, xx))
+	def set_filename(self, name):
 		self.filename = name
 
 
@@ -254,7 +250,7 @@ def show_resource_def(a_resource_def, a_output, a_controller):
 	attr_store = AttributeStore()
 	a_controller.A = attr_store    # must reset
 	#
-	attr_store.set_filename(a_resource_def.path, a_controller)
+	attr_store.set_filename(a_resource_def.path)
 	#
 	attr_store.add_octal('p', s.st_mode & PERM_MASK, (s, a_resource_def.path))
 	attr_store.add_long('i', s.st_ino)
