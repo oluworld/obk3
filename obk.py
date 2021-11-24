@@ -211,6 +211,7 @@ class ResourceDef(object):
 		self.stat = ('<INVALID>',)
 		
 	def populate(self, a_controller):
+		""" fill in self.stat and sum """
 		filename = self.path
 		
 		if os.path.islink(filename):
