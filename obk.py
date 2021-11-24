@@ -16,12 +16,6 @@ def _sha256(bytes):
 	hasher.update(bytes)
 	return hasher
 
-# s256 = _sha256.sha256()
-# s256.update(b'abc')
-# hd = s256.hexdigest()
-#
-# print (hd)
-
 # from alvo import *
 
 # try:
