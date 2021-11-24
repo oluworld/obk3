@@ -34,7 +34,7 @@ class G:
 		self.xx.write(x)
 	
 	def Assert(self, subj, pred):
-		print (subj, pred, file=self.xx)
+		print(subj, pred, file=self.xx)
 
 
 class G0:
