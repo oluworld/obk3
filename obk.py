@@ -325,7 +325,7 @@ class Controller(object):
 	__slots__ = ('resource_number', 'nodes', 'gg', 'O', 'A', 'last_inode', '_root', '_i')
 
 
-class RecursionFlowControl:
+class RecursionFlowControl(Exception):
 	__slots__ = ('K', 'N')
 
 
